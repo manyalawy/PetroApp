@@ -20,5 +20,9 @@ class TransferEvent(Base):
 
     __table_args__ = (
         CheckConstraint("amount >= 0", name="ck_transfer_events_amount_nonneg"),
+        CheckConstraint(
+            "status IN ('pending', 'rejected', 'approved')",
+            name="ck_transfer_events_status_valid",
+        ),
         Index("ix_transfer_events_station_id", "station_id"),
     )

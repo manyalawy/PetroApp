@@ -116,3 +116,8 @@ async def test_validation_fail_fast_negative_amount(client: AsyncClient):
 async def test_station_not_found_returns_404(client: AsyncClient):
     resp = await client.get("/stations/NONEXISTENT/summary")
     assert resp.status_code == 404
+
+
+async def test_validation_fail_fast_invalid_status(client: AsyncClient):
+    resp = await client.post("/transfers", json={"events": [make_event(status="invalid")]})
+    assert resp.status_code == 400

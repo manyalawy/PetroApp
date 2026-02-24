@@ -1,4 +1,6 @@
 from datetime import datetime
+from typing import Literal
+
 from pydantic import BaseModel, Field, field_validator
 
 
@@ -6,10 +8,10 @@ class TransferEventIn(BaseModel):
     event_id: str
     station_id: str
     amount: float = Field(ge=0)
-    status: str
+    status: Literal["pending", "rejected", "approved"]
     created_at: datetime
 
-    @field_validator("event_id", "station_id", "status")
+    @field_validator("event_id", "station_id")
     @classmethod
     def non_empty(cls, v: str) -> str:
         if not v.strip():
