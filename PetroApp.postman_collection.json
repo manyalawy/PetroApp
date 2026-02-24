@@ -1,0 +1,92 @@
+{
+  "info": {
+    "name": "PetroApp",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "POST /transfers",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/transfers",
+          "host": ["{{base_url}}"],
+          "path": ["transfers"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"events\": [\n    {\n      \"event_id\": \"evt-001\",\n      \"station_id\": \"station-A\",\n      \"amount\": 150.75,\n      \"status\": \"approved\",\n      \"created_at\": \"2026-02-24T10:00:00Z\"\n    },\n    {\n      \"event_id\": \"evt-002\",\n      \"station_id\": \"station-A\",\n      \"amount\": 80.00,\n      \"status\": \"pending\",\n      \"created_at\": \"2026-02-24T11:00:00Z\"\n    },\n    {\n      \"event_id\": \"evt-003\",\n      \"station_id\": \"station-B\",\n      \"amount\": 200.00,\n      \"status\": \"approved\",\n      \"created_at\": \"2026-02-24T12:00:00Z\"\n    }\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": [
+        {
+          "name": "201 Created",
+          "status": "Created",
+          "code": 201,
+          "header": [{"key": "Content-Type", "value": "application/json"}],
+          "body": "{\n  \"inserted\": 3,\n  \"duplicates\": 0\n}"
+        },
+        {
+          "name": "201 Created (with duplicates)",
+          "status": "Created",
+          "code": 201,
+          "header": [{"key": "Content-Type", "value": "application/json"}],
+          "body": "{\n  \"inserted\": 2,\n  \"duplicates\": 1\n}"
+        },
+        {
+          "name": "400 Bad Request (validation error)",
+          "status": "Bad Request",
+          "code": 400,
+          "header": [{"key": "Content-Type", "value": "application/json"}],
+          "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\"body\", \"events\", 0, \"amount\"],\n      \"msg\": \"Input should be greater than or equal to 0\",\n      \"type\": \"greater_than_equal\"\n    }\n  ]\n}"
+        }
+      ]
+    },
+    {
+      "name": "GET /stations/{station_id}/summary",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/stations/station-A/summary",
+          "host": ["{{base_url}}"],
+          "path": ["stations", "station-A", "summary"]
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "status": "OK",
+          "code": 200,
+          "header": [{"key": "Content-Type", "value": "application/json"}],
+          "body": "{\n  \"station_id\": \"station-A\",\n  \"total_approved_amount\": 150.75,\n  \"events_count\": 2\n}"
+        },
+        {
+          "name": "404 Not Found",
+          "status": "Not Found",
+          "code": 404,
+          "header": [{"key": "Content-Type", "value": "application/json"}],
+          "body": "{\n  \"detail\": \"No events found for station 'station-A'\"\n}"
+        }
+      ]
+    }
+  ]
+}
