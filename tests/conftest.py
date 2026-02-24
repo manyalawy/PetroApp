@@ -10,10 +10,7 @@ from app.db import get_session
 from app.main import app
 from app.models.transfer_event import Base
 
-TEST_DATABASE_URL = os.getenv(
-    "TEST_DATABASE_URL",
-    "postgresql+asyncpg://petro:petro@localhost:5432/petro_test",
-)
+TEST_DATABASE_URL = os.getenv("TEST_DATABASE_URL")
 
 
 @pytest_asyncio.fixture(scope="session")
