@@ -107,6 +107,21 @@ PostgreSQL's MVCC ensures that two concurrent transactions with the same `event_
 
 The entire batch is validated by Pydantic before any DB write. If any event is invalid, the request returns `400` with a descriptive error. No partial inserts.
 
+### Status Field Constraints
+
+`status` is restricted to `"pending"`, `"rejected"`, or `"approved"` at two layers:
+
+- **Pydantic** (`Literal["pending", "rejected", "approved"]`) — rejects invalid values at the API boundary with a `400`.
+- **DB CHECK constraint** (`ck_transfer_events_status_valid`) — safety net for any direct writes that bypass the API.
+
+For existing databases, apply the constraint once:
+
+```sql
+ALTER TABLE transfer_events
+  ADD CONSTRAINT ck_transfer_events_status_valid
+  CHECK (status IN ('pending', 'rejected', 'approved'));
+```
+
 ### events_count Definition
 
 `events_count` counts **all stored events** for a station, regardless of status. Only `total_approved_amount` filters to `status = 'approved'`.
